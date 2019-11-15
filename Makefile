@@ -25,7 +25,7 @@ $(OBJ_PATH)%.o: $(SRC_PATH)%.c $(INC)
 	gcc $(FLAG) -g -I $(INC_PATH) -o $@ -c $<
 
 clean:
-	rm -rf *.o
+	rm -rf $(OBJ_PATH)
 
 fclean: clean
 	rm -rf ${NAME}
