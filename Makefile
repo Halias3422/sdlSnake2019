@@ -4,7 +4,7 @@ SRC_PATH = ./src/
 OBJ_PATH = ./obj/
 INC_PATH = ./includes/
 
-SOURCES= main.c init_sdl_struct.c
+SOURCES= main.c generic_sdl_functions.c init_playground_colors.c
 INCLUDES= snake.h
 OBJ_NAME = $(SOURCES:.c=.o)
 

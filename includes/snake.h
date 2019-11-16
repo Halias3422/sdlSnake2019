@@ -10,23 +10,22 @@ typedef struct			s_sdl
 {
 	SDL_Window			*window;
 	SDL_Renderer		*renderer;
-	SDL_Color			bg;
 	SDL_Color			border;
-	SDL_Rect			border_rect_up;
-	SDL_Rect			border_rect_down;
-	SDL_Rect			border_rect_left;
-	SDL_Rect			border_rect_right;
-	SDL_Rect			border2_rect_up;
-	SDL_Rect			border2_rect_down;
-	SDL_Rect			border2_rect_left;
-	SDL_Rect			border2_rect_right;
 }						t_sdl;
 
-/*
-**	INIT_SDL_STRUCT_C
-*/
+//		MAIN_C
 
-void			init_sdl_struct(t_sdl *sdl);
+void			failure_exit_program(char *error, t_sdl *sdl);
+
+//		GENEREIC_SDL_FUNCTIONS_C
+
+void			generic_fill_rect(SDL_Rect rect, t_sdl *sdl);
+void			generic_apply_colour_to_renderer(SDL_Color rgba, t_sdl *sdl,
+				int clear_renderer);
+
+//		INIT_PLAYGROUND_COLORS_C
+
+void			apply_general_background_color(t_sdl *sdl);
 
 #endif
 
