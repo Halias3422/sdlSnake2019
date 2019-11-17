@@ -24,9 +24,16 @@ typedef struct			s_snake
 	struct s_snake		*next;
 }						t_snake;
 
+typedef struct			s_keys
+{
+	int					direction;
+	struct s_keys		*next;
+}						t_keys;
+
 //		MAIN_C
 
 void			failure_exit_program(char *error, t_sdl *sdl);
+void			free_snake_list(t_snake *snake);
 
 //		GENEREIC_SDL_FUNCTIONS_C
 

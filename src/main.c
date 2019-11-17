@@ -57,7 +57,7 @@ void			init_snake_list(t_snake *snake)
 {
 	t_snake		*tmp;
 	int			x = 440;
-	int			y = 350;
+	int			y = 360;
 
 	snake->prev = NULL;
 	snake->x = x;
@@ -113,7 +113,6 @@ int				main(void)
 	SDL_DestroyTexture(sdl.title);
 	SDL_DestroyTexture(sdl.playground);
 	SDL_Quit();
-	free_snake_list(snake);
 	printf("CLEAN EXIT");
 	return (EXIT_SUCCESS);
 }

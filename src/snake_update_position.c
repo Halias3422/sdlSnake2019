@@ -78,7 +78,6 @@ t_snake			*snake_going_left(t_snake *snake)
 
 t_snake			*snake_update_position(t_snake *snake, int direction)
 {
-	print_snake_list(snake);
 	if (!snake || !snake->next)
 		failure_exit_program("PLUS DE SNAKE", NULL);
 	if (direction == 1)
