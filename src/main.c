@@ -1,12 +1,5 @@
 #include "../includes/snake.h"
 
-void			init_sdl_struct(t_sdl *sdl)
-{
-	sdl->window = NULL;
-	sdl->renderer = NULL;
-	sdl->title = NULL;
-	sdl->playground = NULL;
-}
 
 void			failure_exit_program(char *error, t_sdl *sdl)
 {
@@ -18,101 +11,82 @@ void			failure_exit_program(char *error, t_sdl *sdl)
 	SDL_DestroyRenderer(sdl->renderer);
 	SDL_DestroyTexture(sdl->title);
 	SDL_DestroyTexture(sdl->playground);
+	SDL_DestroyTexture(sdl->looser);
+	SDL_DestroyTexture(sdl->score);
 	SDL_Quit();
 	exit(EXIT_FAILURE);
 }
 
-//	ADD ULTRA COOL BORDER LINES FOR FUTURISTIC STYLING
-
-void			init_window_and_renderer_sdl(t_sdl *sdl)
-{
-	//	INIT SDL
-	if (SDL_Init(SDL_INIT_VIDEO) == -1)
-		failure_exit_program("initialization SDL", sdl);
-	printf("SDL Successfully initialized\n");
-
-	//	CREATE WINDOW FOR GAME
-	if ((sdl->window = SDL_CreateWindow("SUPER OVER THE TOP SNAKE 2000",
-					SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1200, 800,
-					SDL_WINDOW_SHOWN)) == NULL)
-		failure_exit_program("creating sdl->window", sdl);
-	printf("Window '%s' successfully created\n", SDL_GetWindowTitle(sdl->window));
-
-	//	CREATE RENDERER FOR WINDOW
-	if ((sdl->renderer = SDL_CreateRenderer(sdl->window, -1,
-					SDL_RENDERER_ACCELERATED)) == NULL)
-		failure_exit_program("creating renderer", sdl);
-}
-
-void			create_playground_texture(t_sdl *sdl)
-{
-	if ((sdl->playground = SDL_CreateTexture(sdl->renderer,
-					SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 900, 500))
-			== NULL)
-		failure_exit_program("Creating Playground Texture", sdl);
-}
-
-
-void			init_snake_list(t_snake *snake)
+int				free_snake_list(t_snake *snake)
 {
 	t_snake		*tmp;
-	int			x = 440;
-	int			y = 360;
-
-	snake->prev = NULL;
-	snake->x = x;
-	snake->y = y;
-	snake->next = NULL;
-	for (int i = 0; i < 3; i++)
-	{
-		y -= 20;
-		tmp = (t_snake*)malloc(sizeof(t_snake));
-		tmp->prev = snake;
-		tmp->next = NULL;
-		tmp->x = x;
-		tmp->y = y;
-		snake->next = tmp;
-		snake = snake->next;
-	}
-}
-
-void			free_snake_list(t_snake *snake)
-{
-	t_snake		*tmp;
+	int			score = 0;
 
 	while (snake)
 	{
 		tmp = snake;
 		snake = snake->next;
 		free(tmp);
+		score++;
+	}
+	return (score);
+}
+
+int				main_loop(t_sdl *sdl, t_snake *snake)
+{
+	int			score = 0;
+
+	apply_general_background_color(sdl);
+	create_playground_texture(sdl);
+	snake = (t_snake*)malloc(sizeof(t_snake));
+	init_snake_list(snake);
+
+	update_playground_texture(sdl, snake, NULL);
+	snake = game_loop(sdl, snake);
+	score = ((free_snake_list(snake) - 4) * 10);
+
+	apply_general_background_color(sdl);
+	print_looser_score(sdl, score);
+	while (1)
+	{
+		while (SDL_PollEvent(&sdl->event))
+		{
+			if (sdl->event.key.keysym.sym == SDLK_ESCAPE)
+				return (0);
+			else if (sdl->event.key.keysym.sym == SDLK_RETURN)
+				return (1);
+		}
+		SDL_Delay(100);
 	}
 }
 
 int				main(void)
 {
 	t_sdl		sdl;
-	t_snake		*snake;
+	t_snake		*snake = NULL;
+	int			restart = 0;
 
 	//	INIT SDL, GAME WINDOW AND SNAKE LIST
 	init_sdl_struct(&sdl);
 	init_window_and_renderer_sdl(&sdl);
-	apply_general_background_color(&sdl);
-	create_playground_texture(&sdl);
-	snake = (t_snake*)malloc(sizeof(t_snake));
-	init_snake_list(snake);
-	//	GAME LOOP
-	printf("jarrive a la boucle\n");
-	update_playground_texture(&sdl, snake);
-	game_loop(&sdl, snake);
-	 printf("Je sors de la boucle\n");
 
-	SDL_Delay(4000);
+	//	MAIN GAME LOOP
+	while (1)
+	{
+		if (main_loop(&sdl, snake) == 0)
+			break ;
+	}
+
 	//	CLEAN SDL ALLOCS
 	SDL_DestroyWindow(sdl.window);
 	SDL_DestroyRenderer(sdl.renderer);
 	SDL_DestroyTexture(sdl.title);
 	SDL_DestroyTexture(sdl.playground);
+	SDL_DestroyTexture(sdl.looser);
+	SDL_DestroyTexture(sdl.score);
 	SDL_Quit();
-	printf("CLEAN EXIT");
+	if (restart == 1)
+		main();
+	printf("CLEAN EXIT\n");
 	return (EXIT_SUCCESS);
 }

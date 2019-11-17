@@ -1,10 +1,12 @@
 #include "../includes/snake.h"
 
-void			update_playground_texture(t_sdl *sdl, t_snake *snake)
+void			update_playground_texture(t_sdl *sdl, t_snake *snake,
+				t_apple *apple)
 {
 	SDL_Color	playground_color = {0, 76, 153, 255};
 	SDL_Rect	dst = {150, 225, 0, 0};
 	SDL_Color	snake_color = {255, 255, 0, 255};
+	SDL_Color	apple_color = {255, 0, 0, 255};
 	SDL_Rect	square = {0, 0, 20, 20};
 
 	if ((SDL_SetRenderTarget(sdl->renderer, sdl->playground)) != 0)
@@ -18,16 +20,59 @@ void			update_playground_texture(t_sdl *sdl, t_snake *snake)
 		generic_fill_rect(square, sdl);
 		snake = snake->next;
 	}
+	if (apple)
+	{
+		generic_apply_colour_to_renderer(apple_color, sdl, 0);
+		square.x = apple->x;
+		square.y = apple->y;
+		generic_fill_rect(square, sdl);
+	}
 	SDL_SetRenderTarget(sdl->renderer, NULL);
 	SDL_QueryTexture(sdl->playground, NULL, NULL, &dst.w, &dst.h);
 	SDL_RenderCopy(sdl->renderer, sdl->playground, NULL, &dst);
 	SDL_RenderPresent(sdl->renderer);
 }
 
-void			get_updated_direction(t_sdl *sdl, int *direction, t_keys *keys)
+t_snake			*snake_update_position(t_snake *snake, int direction,
+				int *old_x, int *old_y)
+{
+	t_snake		*tmp;
+
+	if (!snake || !snake->next)
+		failure_exit_program("PLUS DE SNAKE", NULL);
+	*old_x = snake->x;
+	*old_y = snake->y;
+	tmp = snake;
+	snake = snake->next;
+	free(tmp);
+	snake->prev = NULL;
+	while (snake->next)
+		snake = snake->next;
+	tmp = (t_snake*)malloc(sizeof(t_snake));
+	if (direction == 1 || direction == 3)
+		tmp->x = snake->x;
+	else if (direction == 2 || direction == 4)
+		tmp->y = snake->y;
+	if (direction == 1)
+		tmp->y = snake->y - 20;
+	else if (direction == 2)
+		tmp->x = snake->x + 20;
+	else if (direction == 3)
+		tmp->y = snake->y + 20;
+	else if (direction == 4)
+		tmp->x = snake->x - 20;
+	tmp->prev = snake;
+	tmp->next = NULL;
+	snake->next = tmp;
+	while (snake->prev)
+		snake = snake->prev;
+	return (snake);
+}
+
+void			get_updated_direction(t_sdl *sdl, int *direction)
 {
 	if (sdl->event.key.keysym.sym == SDLK_ESCAPE)
-		failure_exit_program("JE QUITTE", sdl);
+		failure_exit_program("Quitting in middle of game", sdl);
 	else if ((sdl->event.key.keysym.sym == SDLK_w ||
 				sdl->event.key.keysym.sym == SDLK_UP) && *direction != 3)
 		*direction = 1;
@@ -40,34 +85,6 @@ void			get_updated_direction(t_sdl *sdl, int *direction, t_keys *keys)
 	else if ((sdl->event.key.keysym.sym == SDLK_a ||
 				sdl->event.key.keysym.sym == SDLK_LEFT) && *direction != 2)
 		*direction = 4;
-	while (keys)
-		keys = keys->next;
-	keys = (t_keys*)malloc(sizeof(t_keys));
-	keys->direction = *direction;
-	keys->next = NULL;
-}
-
-void			free_keys_list(t_keys *keys)
-{
-	t_keys		*tmp;
-
-	while (keys)
-	{
-		tmp = keys;
-		keys = keys->next;
-		free(tmp);
-	}
-}
-
-void			print_keys(t_keys *keys)
-{
-	printf("JE RENTRE LA\n");
-	while (keys)
-	{
-		printf("key direction = %d\n", keys->direction);
-		keys = keys->next;
-	}
-	printf("liste finie\n\n");
 }
 
 int				check_if_snake_is_dead(t_snake *snake)
@@ -88,40 +105,83 @@ int				check_if_snake_is_dead(t_snake *snake)
 	return (0);
 }
 
-void			game_loop(t_sdl *sdl, t_snake *snake)
+void			place_random_apple(t_apple *apple, t_snake *snake)
 {
-	int			direction = 1;
-	t_keys		*keys;
-	t_keys		*head;
-	int			poulet;
+	t_snake		*head = snake;
 
+	srand(time(NULL));
+	apple->x = rand() % 880;
+	apple->y = rand() % 480;
+	while (apple->x % 20 != 0)
+		apple->x++;
+	while (apple->y % 20 != 0)
+		apple->y++;
+	while (snake->next)
+	{
+		if (snake->x == apple->x && snake->y == apple->y)
+			place_random_apple(apple, head);
+		snake = snake->next;
+	}
+}
+
+t_snake			*check_eaten_apple(t_snake *snake, t_apple *apple,
+				int old_x, int old_y)
+{
+	t_snake		*head = snake;
+	t_snake		*new = NULL;
+
+	while (snake->next)
+		snake = snake->next;
+	if (snake->x == apple->x && snake->y == apple->y)
+	{
+		place_random_apple(apple, snake);
+		new = (t_snake*)malloc(sizeof(t_snake));
+		new->x = old_x;
+		new->y = old_y;
+		new->prev = NULL;
+		new->next = head;
+		return (new);
+	}
+	return (head);
+}
+
+t_snake			*game_loop(t_sdl *sdl, t_snake *snake)
+{
+	int			n_frames_mod = 0;
+	int			last_movement_drawn = 1;
+	int			direction = 1;
+	t_apple		*apple;
+	int			old_x = 0;
+	int			old_y = 0;
+
+	apple = (t_apple*)malloc(sizeof(t_apple));
+	place_random_apple(apple, snake);
 	while (1)
 	{
-		poulet = 0;
-		keys = (t_keys*)malloc(sizeof(t_keys));
-		keys->direction = direction;
-		keys->next = NULL;
-		head = keys;
 		while (SDL_PollEvent(&sdl->event))
 		{
-			poulet++;
-			if (sdl->event.type == SDL_KEYDOWN)
-				get_updated_direction(sdl, &direction, keys);
-			if (poulet > 1)
-				printf(" ");
+			if (sdl->event.type == SDL_KEYDOWN && last_movement_drawn)
+			{
+				get_updated_direction(sdl, &direction);
+				last_movement_drawn = 0;
+			}
 			else
 				break ;
 		}
-//		while (keys)
-//		{
-			snake = snake_update_position(snake, direction);
-		update_playground_texture(sdl, snake);
-			SDL_Delay(100);
-//			keys = keys->next;
-//		}
-		free_keys_list(head);
+		if (n_frames_mod == 0)
+		{
+			snake = snake_update_position(snake, direction, &old_x, &old_y);
+			snake = check_eaten_apple(snake, apple, old_x, old_y);
+			update_playground_texture(sdl, snake, apple);
+			last_movement_drawn = 1;
+			SDL_Delay(60);
+		}
+		n_frames_mod = (n_frames_mod + 1) % 60;
 		if (check_if_snake_is_dead(snake) == 1)
+		{
+			free(apple);
 			break ;
+		}
 	}
-	free_snake_list(snake);
+	return (snake);
 }

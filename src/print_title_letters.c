@@ -193,3 +193,180 @@ void			print_0_title(t_sdl *sdl, int offset_x, int offset_y)
 	generic_fill_rect(hor_bar, sdl);
 	print_u_title(sdl, offset_x, offset_y);
 }
+
+void			print_1_title(t_sdl *sdl, int offset_x, int offset_y)
+{
+	SDL_Rect	hor_bar = {0, 80, 45, 20};
+	SDL_Rect	vert_bar = {15, 0, 20, 80};
+	SDL_Rect	diag_bar = {15, 0, 10, 2};
+
+	hor_bar.x += offset_x;
+	hor_bar.y += offset_y;
+	vert_bar.x += offset_x;
+	vert_bar.y += offset_y;
+	diag_bar.x += offset_x;
+	diag_bar.y += offset_y;
+	generic_fill_rect(hor_bar, sdl);
+	generic_fill_rect(vert_bar, sdl);
+	for (int i = 0; i < 15; i++)
+	{
+		generic_fill_rect(diag_bar, sdl);
+		if (i == 4)
+			diag_bar.w += 5;
+		diag_bar.x -= 1;
+		diag_bar.y += 2;
+	}
+}
+
+void			print_3_title(t_sdl *sdl, int offset_x, int offset_y)
+{
+	SDL_Rect	hor_bar = {0, 0, 25, 20};
+	SDL_Rect	vert_bar = {25, 0, 20, 100};
+
+	hor_bar.x += offset_x;
+	hor_bar.y += offset_y;
+	vert_bar.x += offset_x;
+	vert_bar.y += offset_y;
+	generic_fill_rect(vert_bar, sdl);
+	for (int i = 0; i < 3; i++)
+	{
+		generic_fill_rect(hor_bar, sdl);
+		hor_bar.y += 40;
+	}
+}
+
+void			print_4_title(t_sdl *sdl, int offset_x, int offset_y)
+{
+	SDL_Rect	hor_bar = {0, 40, 45, 20};
+	SDL_Rect	vert_bar = {25, 0, 20, 100};
+	SDL_Rect	diag_bar = {0, 40, 20, 2};
+
+	hor_bar.x += offset_x;
+	hor_bar.y += offset_y;
+	vert_bar.x += offset_x;
+	vert_bar.y += offset_y;
+	diag_bar.x += offset_x;
+	diag_bar.y += offset_y;
+	generic_fill_rect(hor_bar, sdl);
+	generic_fill_rect(vert_bar, sdl);
+	for (int i = 0; i < 21; i++)
+	{
+		generic_fill_rect(diag_bar, sdl);
+		diag_bar.x += 1;
+		diag_bar.y -= 2;
+	}
+}
+
+
+void			print_5_title(t_sdl *sdl, int offset_x, int offset_y)
+{
+	print_s_title(sdl, offset_x, offset_y);
+}
+
+void			print_6_title(t_sdl *sdl, int offset_x, int offset_y)
+{
+	SDL_Rect	hor_bar = {20, 0, 25, 20};
+	SDL_Rect	vert_bar = {0, 0, 20, 100};
+
+	hor_bar.x += offset_x;
+	hor_bar.y += offset_y;
+	vert_bar.x += offset_x;
+	vert_bar.y += offset_y;
+	generic_fill_rect(vert_bar, sdl);
+	for (int i = 0; i < 3; i++)
+	{
+		generic_fill_rect(hor_bar, sdl);
+		hor_bar.y += 40;
+	}
+	vert_bar.y += 60;
+	vert_bar.x += 25;
+	vert_bar.h = 20;
+	generic_fill_rect(vert_bar, sdl);
+}
+
+void			print_7_title(t_sdl *sdl, int offset_x, int offset_y)
+{
+	SDL_Rect	hor_bar = {0, 0, 45, 20};
+	SDL_Rect	vert_bar = {25, 20, 20, 3};
+
+	hor_bar.x += offset_x;
+	hor_bar.y += offset_y;
+	vert_bar.x += offset_x;
+	vert_bar.y += offset_y;
+	generic_fill_rect(hor_bar, sdl);
+	for (int i = 0; i < 30; i++)
+	{
+		generic_fill_rect(vert_bar, sdl);
+		vert_bar.x -= 1;
+		vert_bar.y += 3;
+	}
+}
+
+void			print_8_title(t_sdl *sdl, int offset_x, int offset_y)
+{
+	SDL_Rect	hor_bar = {0, 0, 45, 20};
+	SDL_Rect	vert_bar = {0, 0, 20, 100};
+
+	hor_bar.x += offset_x;
+	hor_bar.y += offset_y;
+	vert_bar.x += offset_x;
+	vert_bar.y += offset_y;
+	for (int i = 0; i < 2; i++)
+	{
+		generic_fill_rect(vert_bar, sdl);
+		vert_bar.x += 25;
+	}
+	for (int i = 0; i < 3; i++)
+	{
+		generic_fill_rect(hor_bar, sdl);
+		hor_bar.y += 40;
+	}
+}
+
+void			print_9_title(t_sdl *sdl, int offset_x, int offset_y)
+{
+	SDL_Rect	hor_bar = {0, 0, 45, 20};
+	SDL_Rect	vert_bar = {0, 0, 20, 40};
+
+	hor_bar.x += offset_x;
+	hor_bar.y += offset_y;
+	vert_bar.x += offset_x;
+	vert_bar.y += offset_y;
+	generic_fill_rect(vert_bar, sdl);
+	vert_bar.h = 100;
+	vert_bar.x += 25;
+	generic_fill_rect(vert_bar, sdl);
+	for (int i = 0; i < 3; i++)
+	{
+		generic_fill_rect(hor_bar, sdl);
+		hor_bar.y += 40;
+	}
+}
+
+void			print_c_title(t_sdl *sdl, int offset_x, int offset_y)
+{
+	SDL_Rect	hor_bar = {20, 0, 25, 20};
+	SDL_Rect	vert_bar = {0, 0, 20, 100};
+
+	hor_bar.x += offset_x;
+	hor_bar.y += offset_y;
+	vert_bar.x += offset_x;
+	vert_bar.y += offset_y;
+	generic_fill_rect(vert_bar, sdl);
+	for (int i = 0; i < 2; i++)
+	{
+		generic_fill_rect(hor_bar, sdl);
+		hor_bar.y += 80;
+	}
+}
+
+void			print_db_points_title(t_sdl *sdl, int offset_x, int offset_y)
+{
+	SDL_Rect	square = {15, 20, 20, 20};
+
+	square.x += offset_x;
+	square.y += offset_y;
+	generic_fill_rect(square, sdl);
+	square.y += 40;
+	generic_fill_rect(square, sdl);
+}
