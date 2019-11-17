@@ -55,10 +55,6 @@ int				main_loop(t_sdl *sdl, t_snake *snake)
 				return (0);
 			else if (sdl->event.key.keysym.sym == SDLK_RETURN)
 			{
-				SDL_DestroyTexture(sdl->title);
-				SDL_DestroyTexture(sdl->playground);
-				SDL_DestroyTexture(sdl->looser);
-				SDL_DestroyTexture(sdl->score);
 				return (1);
 			}
 		}
@@ -70,26 +66,25 @@ int				main(void)
 {
 	t_sdl		sdl;
 	t_snake		*snake = NULL;
+	int			restart = 0;
 
 	//	INIT SDL, GAME WINDOW AND SNAKE LIST
 	init_sdl_struct(&sdl);
 	init_window_and_renderer_sdl(&sdl);
 
 	//	MAIN GAME LOOP
-	while (1)
-	{
-		if (main_loop(&sdl, snake) == 0)
-			break ;
-	}
+	restart = main_loop(&sdl, snake);
 
 	//	CLEAN SDL ALLOCS
-	SDL_DestroyWindow(sdl.window);
 	SDL_DestroyRenderer(sdl.renderer);
 	SDL_DestroyTexture(sdl.title);
 	SDL_DestroyTexture(sdl.playground);
 	SDL_DestroyTexture(sdl.looser);
 	SDL_DestroyTexture(sdl.score);
+	SDL_DestroyWindow(sdl.window);
 	SDL_Quit();
+	if (restart == 1)
+		main();
 	printf("CLEAN EXIT\n");
 	return (EXIT_SUCCESS);
 }
