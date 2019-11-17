@@ -171,11 +171,11 @@ t_snake			*game_loop(t_sdl *sdl, t_snake *snake)
 		if (n_frames_mod == 0)
 		{
 			snake = snake_update_position(snake, direction, &old_x, &old_y);
-			snake = check_eaten_apple(snake, apple, old_x, old_y);
 			update_playground_texture(sdl, snake, apple);
 			last_movement_drawn = 1;
 			SDL_Delay(40);
 		}
+		snake = check_eaten_apple(snake, apple, old_x, old_y);
 		n_frames_mod = (n_frames_mod + 1) % 60;
 		if (check_if_snake_is_dead(snake) == 1)
 		{
