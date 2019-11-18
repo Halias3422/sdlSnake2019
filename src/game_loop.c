@@ -124,10 +124,17 @@ void			place_random_apple(t_apple *apple, t_snake *snake)
 			place_random_apple(apple, head);
 		snake = snake->next;
 	}
-	if (apple->prev_x == apple->x && apple->prev_y == apple->y)
-		place_random_apple(apple, head);
-	apple->prev_y = apple->y;
-	apple->prev_x = apple->x;
+	if (apple->old_x == apple->x && apple->old_y == apple->y)
+	{
+		if (apple->x <= 860)
+			apple->x += 20;
+		else
+			apple->x -= 20;
+		if (apple->y <= 460)
+			apple->y += 20;
+		else
+			apple->y -= 20;
+	}
 }
 
 t_snake			*check_eaten_apple(t_snake *snake, t_apple *apple,
@@ -140,6 +147,8 @@ t_snake			*check_eaten_apple(t_snake *snake, t_apple *apple,
 		snake = snake->next;
 	if (snake->x == apple->x && snake->y == apple->y)
 	{
+		apple->old_x = apple->x;
+		apple->old_y = apple->y;
 		place_random_apple(apple, snake);
 		new = (t_snake*)malloc(sizeof(t_snake));
 		new->x = old_x;
@@ -161,8 +170,8 @@ t_snake			*game_loop(t_sdl *sdl, t_snake *snake)
 	int			old_y = 0;
 
 	apple = (t_apple*)malloc(sizeof(t_apple));
-	apple->prev_x = -1;
-	apple->prev_y = -1;
+	apple->old_x = -1;
+	apple->old_y = 1;
 	place_random_apple(apple, snake);
 	while (1)
 	{

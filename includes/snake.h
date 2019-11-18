@@ -31,8 +31,8 @@ typedef struct			s_apple
 {
 	int					x;
 	int					y;
-	int					prev_x;
-	int					prev_y;
+	int					old_x;
+	int					old_y;
 }						t_apple;
 
 char			*ft_itoa_base_uns(unsigned long long nb, int base);
