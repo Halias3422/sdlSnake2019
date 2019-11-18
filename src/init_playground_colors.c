@@ -82,4 +82,5 @@ void			apply_general_background_color(t_sdl *sdl)
 
 	// APPLY NEW COLORS TO SCREEN
 	SDL_RenderPresent(sdl->renderer);
+	SDL_DestroyTexture(sdl->title);
 }

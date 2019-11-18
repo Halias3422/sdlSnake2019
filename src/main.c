@@ -27,6 +27,7 @@ int				free_snake_list(t_snake *snake)
 		tmp = snake;
 		snake = snake->next;
 		free(tmp);
+		tmp = NULL;
 		score++;
 	}
 	return (score);
@@ -37,11 +38,11 @@ int				main_loop(t_sdl *sdl, t_snake *snake)
 	int			score = 0;
 
 	apply_general_background_color(sdl);
-	create_playground_texture(sdl);
 	snake = (t_snake*)malloc(sizeof(t_snake));
 	init_snake_list(snake);
 
 	update_playground_texture(sdl, snake, NULL);
+	SDL_Delay(1000);
 	snake = game_loop(sdl, snake);
 	score = ((free_snake_list(snake) - 4) * 10);
 
@@ -55,6 +56,7 @@ int				main_loop(t_sdl *sdl, t_snake *snake)
 				return (0);
 			else if (sdl->event.key.keysym.sym == SDLK_RETURN)
 			{
+				main_loop(sdl, NULL);
 				return (1);
 			}
 		}
@@ -66,25 +68,18 @@ int				main(void)
 {
 	t_sdl		sdl;
 	t_snake		*snake = NULL;
-	int			restart = 0;
 
 	//	INIT SDL, GAME WINDOW AND SNAKE LIST
 	init_sdl_struct(&sdl);
 	init_window_and_renderer_sdl(&sdl);
 
 	//	MAIN GAME LOOP
-	restart = main_loop(&sdl, snake);
+	main_loop(&sdl, snake);
 
 	//	CLEAN SDL ALLOCS
 	SDL_DestroyRenderer(sdl.renderer);
-	SDL_DestroyTexture(sdl.title);
-	SDL_DestroyTexture(sdl.playground);
-	SDL_DestroyTexture(sdl.looser);
-	SDL_DestroyTexture(sdl.score);
 	SDL_DestroyWindow(sdl.window);
 	SDL_Quit();
-	if (restart == 1)
-		main();
 	printf("CLEAN EXIT\n");
 	return (EXIT_SUCCESS);
 }

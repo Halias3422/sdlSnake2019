@@ -9,6 +9,7 @@ void			update_playground_texture(t_sdl *sdl, t_snake *snake,
 	SDL_Color	apple_color = {255, 0, 0, 255};
 	SDL_Rect	square = {0, 0, 20, 20};
 
+	create_playground_texture(sdl);
 	if ((SDL_SetRenderTarget(sdl->renderer, sdl->playground)) != 0)
 		failure_exit_program("Setting playground as render target", sdl);
 	generic_apply_colour_to_renderer(playground_color, sdl, 1);
@@ -31,6 +32,7 @@ void			update_playground_texture(t_sdl *sdl, t_snake *snake,
 	SDL_QueryTexture(sdl->playground, NULL, NULL, &dst.w, &dst.h);
 	SDL_RenderCopy(sdl->renderer, sdl->playground, NULL, &dst);
 	SDL_RenderPresent(sdl->renderer);
+	SDL_DestroyTexture(sdl->playground);
 }
 
 t_snake			*snake_update_position(t_snake *snake, int direction,
@@ -122,6 +124,10 @@ void			place_random_apple(t_apple *apple, t_snake *snake)
 			place_random_apple(apple, head);
 		snake = snake->next;
 	}
+	if (apple->prev_x == apple->x && apple->prev_y == apple->y)
+		place_random_apple(apple, head);
+	apple->prev_y = apple->y;
+	apple->prev_x = apple->x;
 }
 
 t_snake			*check_eaten_apple(t_snake *snake, t_apple *apple,
@@ -155,6 +161,8 @@ t_snake			*game_loop(t_sdl *sdl, t_snake *snake)
 	int			old_y = 0;
 
 	apple = (t_apple*)malloc(sizeof(t_apple));
+	apple->prev_x = -1;
+	apple->prev_y = -1;
 	place_random_apple(apple, snake);
 	while (1)
 	{

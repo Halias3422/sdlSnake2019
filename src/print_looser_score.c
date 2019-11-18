@@ -168,6 +168,7 @@ void			print_game_score(t_sdl *sdl, int score)
 	SDL_QueryTexture(sdl->score, NULL, NULL, &dst.w, &dst.h);
 	SDL_RenderCopy(sdl->renderer, sdl->score, NULL, &dst);
 	SDL_RenderPresent(sdl->renderer);
+	SDL_DestroyTexture(sdl->score);
 }
 
 void			print_looser_score(t_sdl *sdl, int score)
@@ -175,8 +176,6 @@ void			print_looser_score(t_sdl *sdl, int score)
 	SDL_Color	looser_bg = {0, 25, 51, 255};
 	SDL_Color	looser_color = {255, 0, 0, 255};
 	SDL_Rect	dst = {150, 225, 0, 0};
-	(void)sdl;
-	(void)score;
 
 	if ((sdl->looser = SDL_CreateTexture(sdl->renderer, SDL_PIXELFORMAT_RGBA8888,
 					SDL_TEXTUREACCESS_TARGET, 900, 400)) == NULL)
@@ -198,5 +197,6 @@ void			print_looser_score(t_sdl *sdl, int score)
 	SDL_QueryTexture(sdl->looser, NULL, NULL, &dst.w, &dst.h);
 	SDL_RenderCopy(sdl->renderer, sdl->looser, NULL, &dst);
 	SDL_RenderPresent(sdl->renderer);
+	SDL_DestroyTexture(sdl->looser);
 	print_game_score(sdl, score);
 }
